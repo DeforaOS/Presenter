@@ -1,0 +1,194 @@
+# $Id$
+# Copyright (c) 2013 Pierre Pronchery <khorben@defora.org>
+# This file is distributed under the same license as the Presenter package.
+# Pierre Pronchery <khorben@defora.org>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Presenter 0.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-10-29 22:28+0100\n"
+"PO-Revision-Date: 2013-09-16 14:06+0200\n"
+"Last-Translator: Pierre Pronchery <khorben@defora.org>\n"
+"Language-Team: French\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../src/main.c:53
+msgid "Usage: presenter\n"
+msgstr "Usage: presenter\n"
+
+#: ../src/presenter.c:109
+msgid "_New"
+msgstr "_Nouveau"
+
+#: ../src/presenter.c:111
+msgid "_Open"
+msgstr "_Ouvrir"
+
+#: ../src/presenter.c:114
+msgid "_Save"
+msgstr "_Enregistrer"
+
+#: ../src/presenter.c:116
+msgid "_Save as..."
+msgstr "_Enregistrer sous..."
+
+#: ../src/presenter.c:120
+msgid "_Properties"
+msgstr "_Propriétés"
+
+#: ../src/presenter.c:123
+msgid "_Close"
+msgstr "_Fermer"
+
+#: ../src/presenter.c:131
+msgid "_Undo"
+msgstr "_Annuler"
+
+#: ../src/presenter.c:133
+msgid "_Redo"
+msgstr "_Rétablir"
+
+#: ../src/presenter.c:135
+msgid "Cu_t"
+msgstr "Co_uper"
+
+#: ../src/presenter.c:137
+msgid "_Copy"
+msgstr "_Copier"
+
+#: ../src/presenter.c:139
+msgid "_Paste"
+msgstr "C_oller"
+
+#: ../src/presenter.c:142
+msgid "Select _all"
+msgstr "Sélectionner _tout"
+
+#: ../src/presenter.c:149
+msgid "_Unselect all"
+msgstr "Tout _désélectionner"
+
+#: ../src/presenter.c:152
+msgid "_Find"
+msgstr "_Chercher"
+
+#: ../src/presenter.c:155
+msgid "_Preferences"
+msgstr "_Préférences"
+
+#: ../src/presenter.c:162
+msgid "_File..."
+msgstr "_Fichier..."
+
+#: ../src/presenter.c:169
+msgid "_Contents"
+msgstr "_Sommaire"
+
+#: ../src/presenter.c:171
+msgid "_About"
+msgstr "À _propos"
+
+#: ../src/presenter.c:182
+msgid "_File"
+msgstr "_Fichier"
+
+#: ../src/presenter.c:183
+msgid "_Edit"
+msgstr "É_dition"
+
+#: ../src/presenter.c:184
+msgid "_Insert"
+msgstr "_Insertion"
+
+#: ../src/presenter.c:185
+msgid "_Help"
+msgstr "_Aide"
+
+#: ../src/presenter.c:192
+msgid "New"
+msgstr "Nouveau"
+
+#: ../src/presenter.c:193
+msgid "Open"
+msgstr "Ouvrir"
+
+#: ../src/presenter.c:196
+msgid "Save"
+msgstr "Enregistrer"
+
+#: ../src/presenter.c:198
+msgid "Save as"
+msgstr "Enregistrer sous"
+
+#: ../src/presenter.c:201
+msgid "Cut"
+msgstr "Couper"
+
+#: ../src/presenter.c:202
+msgid "Copy"
+msgstr "Copier"
+
+#: ../src/presenter.c:204
+msgid "Paste"
+msgstr "Coller"
+
+#: ../src/presenter.c:208
+msgid "Find"
+msgstr "Chercher"
+
+#: ../src/presenter.c:210
+msgid "Select all"
+msgstr "Tout sélectionner"
+
+#: ../src/presenter.c:213
+msgid "Preferences"
+msgstr "Préférences"
+
+#: ../src/presenter.c:215
+msgid "Properties"
+msgstr "Propriétés"
+
+#: ../src/presenter.c:218
+msgid "Insert file"
+msgstr "Insérer un fichier..."
+
+#: ../src/presenter.c:221
+msgid "Help"
+msgstr "Aide"
+
+#: ../src/presenter.c:309
+msgid "Presenter - "
+msgstr "Presenter - "
+
+#: ../src/presenter.c:310
+msgid "(Untitled)"
+msgstr "(Sans titre)"
+
+#: ../src/presenter.c:340
+msgid "Presentation tool for the DeforaOS desktop"
+msgstr "Outil de présentation pour l'environnement DeforaOS"
+
+#: ../src/presenter.c:347
+msgid "translator-credits"
+msgstr ""
+"Pierre Pronchery <khorben@defora.org>"
+
+#: ../src/presenter.c:388 ../src/presenter.c:392
+msgid "Error"
+msgstr "Erreur"
+
+#: ../src/presenter.c:419
+msgid "Open file..."
+msgstr "Ouvrir un fichier..."
+
+#: ../src/presenter.c:425
+msgid "Presenter files"
+msgstr "Fichiers Presenter"
+
+#: ../src/presenter.c:429
+msgid "All files"
+msgstr "Tous les fichiers"

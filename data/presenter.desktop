@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Presenter
+Comment=A presentation tool
+Exec=presenter
+Icon=x-office-presentation
+Type=Application
+Categories=Office;GTK;
+StartupNotify=true
+MimeType=application/x-presenter
