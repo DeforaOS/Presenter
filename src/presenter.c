@@ -226,9 +226,11 @@ static DesktopToolbar _presenter_toolbar[] =
 	{ "", NULL, NULL, 0, 0, NULL },
 	{ N_("Insert file"), G_CALLBACK(_presenter_on_insert_file),
 		"insert-text", 0, 0, NULL },
+#endif
 	{ "", NULL, NULL, 0, 0, NULL },
 	{ N_("Slideshow"), G_CALLBACK(_presenter_on_slideshow),
 		"x-office-presentation", 0, GDK_KEY_F5, NULL },
+#ifdef EMBEDDED
 	{ "", NULL, NULL, 0, 0, NULL },
 	{ N_("Help"), G_CALLBACK(_presenter_on_contents), "help-contents",
 		0, GDK_KEY_F1, NULL },
