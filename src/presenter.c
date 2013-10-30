@@ -77,6 +77,7 @@ static void _presenter_on_properties(gpointer data);
 static void _presenter_on_save(gpointer data);
 static void _presenter_on_save_as(gpointer data);
 static void _presenter_on_select_all(gpointer data);
+static void _presenter_on_slideshow(gpointer data);
 #ifndef EMBEDDED
 static void _presenter_on_unselect_all(gpointer data);
 #endif
@@ -164,6 +165,13 @@ static const DesktopMenu _presenter_menu_insert[] =
 	{ NULL, NULL, NULL, 0, 0 }
 };
 
+static const DesktopMenu _presenter_menu_view[] =
+{
+	{ N_("_Slideshow"), G_CALLBACK(_presenter_on_slideshow),
+		"x-office-presentation", 0, GDK_KEY_F5 },
+	{ NULL, NULL, NULL, 0, 0 }
+};
+
 static const DesktopMenu _presenter_menu_help[] =
 {
         { N_("_Contents"), G_CALLBACK(_presenter_on_contents), "help-contents",
@@ -182,6 +190,7 @@ static const DesktopMenubar _presenter_menubar[] =
 	{ N_("_File"), _presenter_menu_file },
 	{ N_("_Edit"), _presenter_menu_edit },
 	{ N_("_Insert"), _presenter_menu_insert },
+	{ N_("_View"), _presenter_menu_view },
 	{ N_("_Help"), _presenter_menu_help },
 	{ NULL, NULL }
 };
@@ -217,6 +226,9 @@ static DesktopToolbar _presenter_toolbar[] =
 	{ "", NULL, NULL, 0, 0, NULL },
 	{ N_("Insert file"), G_CALLBACK(_presenter_on_insert_file),
 		"insert-text", 0, 0, NULL },
+	{ "", NULL, NULL, 0, 0, NULL },
+	{ N_("Slideshow"), G_CALLBACK(_presenter_on_slideshow),
+		"x-office-presentation", 0, GDK_KEY_F5, NULL },
 	{ "", NULL, NULL, 0, 0, NULL },
 	{ N_("Help"), G_CALLBACK(_presenter_on_contents), "help-contents",
 		0, GDK_KEY_F1, NULL },
@@ -558,6 +570,13 @@ static void _presenter_on_save_as(gpointer data)
 
 /* presenter_on_select_all */
 static void _presenter_on_select_all(gpointer data)
+{
+	/* FIXME implement */
+}
+
+
+/* presenter_on_slideshow */
+static void _presenter_on_slideshow(gpointer data)
 {
 	/* FIXME implement */
 }
