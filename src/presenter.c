@@ -88,6 +88,8 @@ static void _presenter_on_select_all(gpointer data);
 static void _presenter_on_slideshow(gpointer data);
 static void _presenter_on_slideshow_close(gpointer data);
 static gboolean _presenter_on_slideshow_closex(gpointer data);
+static void _presenter_on_slideshow_next(gpointer data);
+static void _presenter_on_slideshow_previous(gpointer data);
 #ifndef EMBEDDED
 static void _presenter_on_unselect_all(gpointer data);
 #endif
@@ -515,7 +517,18 @@ static void _present_window(Presenter * presenter)
 	g_signal_connect_swapped(presenter->sl_window, "delete-event",
 			G_CALLBACK(_presenter_on_slideshow_closex), presenter);
 	vbox = gtk_vbox_new(FALSE, 0);
+	/* toolbar */
 	presenter->sl_toolbar = gtk_toolbar_new();
+	toolitem = gtk_tool_button_new_from_stock(GTK_STOCK_GO_BACK);
+	g_signal_connect_swapped(toolitem, "clicked", G_CALLBACK(
+				_presenter_on_slideshow_previous), presenter);
+	gtk_toolbar_insert(GTK_TOOLBAR(presenter->sl_toolbar), toolitem, -1);
+	toolitem = gtk_tool_button_new_from_stock(GTK_STOCK_GO_FORWARD);
+	g_signal_connect_swapped(toolitem, "clicked", G_CALLBACK(
+				_presenter_on_slideshow_next), presenter);
+	gtk_toolbar_insert(GTK_TOOLBAR(presenter->sl_toolbar), toolitem, -1);
+	toolitem = gtk_separator_tool_item_new();
+	gtk_toolbar_insert(GTK_TOOLBAR(presenter->sl_toolbar), toolitem, -1);
 	toolitem = gtk_tool_button_new_from_stock(GTK_STOCK_QUIT);
 	g_signal_connect_swapped(toolitem, "clicked", G_CALLBACK(
 				_presenter_on_slideshow_close), presenter);
@@ -673,6 +686,20 @@ static gboolean _presenter_on_slideshow_closex(gpointer data)
 
 	_presenter_on_slideshow_close(presenter);
 	return TRUE;
+}
+
+
+/* presenter_on_slideshow_next */
+static void _presenter_on_slideshow_next(gpointer data)
+{
+	/* FIXME implement */
+}
+
+
+/* presenter_on_slideshow_previous */
+static void _presenter_on_slideshow_previous(gpointer data)
+{
+	/* FIXME implement */
 }
 
 
