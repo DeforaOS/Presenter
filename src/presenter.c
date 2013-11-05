@@ -17,6 +17,7 @@ static char const _license[] =
 
 
 #include <stdio.h>
+#include <string.h>
 #include <libintl.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
@@ -54,10 +55,16 @@ struct _Presenter
 	GtkWidget * fi_text;
 	/* about */
 	GtkWidget * ab_window;
+
+	/* slideshow */
+	GtkWidget * sl_window;
 };
 
 
 /* prototypes */
+/* useful */
+static void _presenter_present(Presenter * presenter);
+
 /* callbacks */
 #ifndef EMBEDDED
 static void _presenter_on_about(gpointer data);
@@ -78,6 +85,7 @@ static void _presenter_on_save(gpointer data);
 static void _presenter_on_save_as(gpointer data);
 static void _presenter_on_select_all(gpointer data);
 static void _presenter_on_slideshow(gpointer data);
+static gboolean _presenter_on_slideshow_closex(gpointer data);
 #ifndef EMBEDDED
 static void _presenter_on_unselect_all(gpointer data);
 #endif
@@ -313,6 +321,10 @@ Presenter * presenter_new(void)
 	gtk_box_pack_end(GTK_BOX(vbox), presenter->statusbar, FALSE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(presenter->window), vbox);
 	gtk_widget_show_all(presenter->window);
+	/* about */
+	presenter->ab_window = NULL;
+	/* slideshow */
+	presenter->sl_window = NULL;
 	return presenter;
 }
 
@@ -456,6 +468,37 @@ int presenter_open_dialog(Presenter * presenter)
 
 
 /* private */
+/* useful */
+/* presenter_present */
+static void _presenter_present(Presenter * presenter)
+{
+	GdkScreen * screen;
+	GdkColor black;
+	GdkRectangle rect;
+
+	if(presenter->sl_window == NULL)
+	{
+		presenter->sl_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		gtk_window_set_keep_above(GTK_WINDOW(presenter->sl_window),
+				TRUE);
+		memset(&black, 0, sizeof(black));
+		gtk_widget_modify_bg(presenter->sl_window, GTK_STATE_NORMAL,
+				&black);
+		g_signal_connect_swapped(presenter->sl_window, "delete-event",
+				G_CALLBACK(_presenter_on_slideshow_closex),
+				presenter);
+	}
+	/* (re-)configure the window */
+	screen = gdk_screen_get_default();
+	gdk_screen_get_monitor_geometry(screen, 0, &rect);
+	gtk_window_move(GTK_WINDOW(presenter->sl_window), rect.x, rect.y);
+	gtk_window_resize(GTK_WINDOW(presenter->sl_window), rect.width,
+			rect.height);
+	gtk_widget_show(presenter->sl_window);
+	gtk_window_fullscreen(GTK_WINDOW(presenter->sl_window));
+}
+
+
 /* callbacks */
 /* presenter_on_about */
 #ifndef EMBEDDED
@@ -580,7 +623,19 @@ static void _presenter_on_select_all(gpointer data)
 /* presenter_on_slideshow */
 static void _presenter_on_slideshow(gpointer data)
 {
-	/* FIXME implement */
+	Presenter * presenter = data;
+
+	_presenter_present(presenter);
+}
+
+
+/* presenter_on_slideshow */
+static gboolean _presenter_on_slideshow_closex(gpointer data)
+{
+	Presenter * presenter = data;
+
+	gtk_widget_hide(presenter->sl_window);
+	return TRUE;
 }
 
 
