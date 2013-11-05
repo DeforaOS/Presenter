@@ -470,24 +470,15 @@ int presenter_open_dialog(Presenter * presenter)
 /* private */
 /* useful */
 /* presenter_present */
+static void _present_window(Presenter * presenter);
+
 static void _presenter_present(Presenter * presenter)
 {
 	GdkScreen * screen;
-	GdkColor black;
 	GdkRectangle rect;
 
 	if(presenter->sl_window == NULL)
-	{
-		presenter->sl_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-		gtk_window_set_keep_above(GTK_WINDOW(presenter->sl_window),
-				TRUE);
-		memset(&black, 0, sizeof(black));
-		gtk_widget_modify_bg(presenter->sl_window, GTK_STATE_NORMAL,
-				&black);
-		g_signal_connect_swapped(presenter->sl_window, "delete-event",
-				G_CALLBACK(_presenter_on_slideshow_closex),
-				presenter);
-	}
+		_present_window(presenter);
 	/* (re-)configure the window */
 	screen = gdk_screen_get_default();
 	gdk_screen_get_monitor_geometry(screen, 0, &rect);
@@ -496,6 +487,18 @@ static void _presenter_present(Presenter * presenter)
 			rect.height);
 	gtk_widget_show(presenter->sl_window);
 	gtk_window_fullscreen(GTK_WINDOW(presenter->sl_window));
+}
+
+static void _present_window(Presenter * presenter)
+{
+	GdkColor black;
+
+	presenter->sl_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_keep_above(GTK_WINDOW(presenter->sl_window), TRUE);
+	memset(&black, 0, sizeof(black));
+	gtk_widget_modify_bg(presenter->sl_window, GTK_STATE_NORMAL, &black);
+	g_signal_connect_swapped(presenter->sl_window, "delete-event",
+			G_CALLBACK(_presenter_on_slideshow_closex), presenter);
 }
 
 
