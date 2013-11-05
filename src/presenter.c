@@ -17,7 +17,6 @@ static char const _license[] =
 
 
 #include <stdio.h>
-#include <string.h>
 #include <libintl.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
@@ -59,6 +58,7 @@ struct _Presenter
 	/* slideshow */
 	GtkWidget * sl_window;
 	GtkWidget * sl_toolbar;
+	GtkWidget * sl_title;
 };
 
 
@@ -501,18 +501,24 @@ static void _presenter_present(Presenter * presenter)
 
 static void _present_window(Presenter * presenter)
 {
+	PangoFontDescription * font;
 	GtkAccelGroup * group;
-	GdkColor black;
+	GdkColor black = { 0x0, 0x0000, 0x0000, 0x0000 };
+	GdkColor white = { 0x0, 0xffff, 0xffff, 0xffff };
 	GtkWidget * vbox;
 	GtkToolItem * toolitem;
 
+	/* font */
+	font = pango_font_description_new();
+	pango_font_description_set_size(font, 20 * PANGO_SCALE);
+	pango_font_description_set_weight(font, PANGO_WEIGHT_BOLD);
+	/* window */
 	group = gtk_accel_group_new();
 	presenter->sl_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_add_accel_group(GTK_WINDOW(presenter->sl_window), group);
 	desktop_accel_create(_presenter_accel_slideshow, presenter, group);
 	g_object_unref(group);
 	gtk_window_set_keep_above(GTK_WINDOW(presenter->sl_window), TRUE);
-	memset(&black, 0, sizeof(black));
 	gtk_widget_modify_bg(presenter->sl_window, GTK_STATE_NORMAL, &black);
 	g_signal_connect_swapped(presenter->sl_window, "delete-event",
 			G_CALLBACK(_presenter_on_slideshow_closex), presenter);
@@ -535,8 +541,16 @@ static void _present_window(Presenter * presenter)
 	gtk_toolbar_insert(GTK_TOOLBAR(presenter->sl_toolbar), toolitem, -1);
 	gtk_box_pack_start(GTK_BOX(vbox), presenter->sl_toolbar, FALSE, TRUE,
 			0);
+	/* title */
+	/* FIXME really implement */
+	presenter->sl_title = gtk_label_new("<Insert title here>");
+	gtk_widget_modify_fg(presenter->sl_title, GTK_STATE_NORMAL, &white);
+	gtk_widget_modify_font(presenter->sl_title, font);
+	gtk_box_pack_start(GTK_BOX(vbox), presenter->sl_title, FALSE, TRUE,
+			0);
 	gtk_container_add(GTK_CONTAINER(presenter->sl_window), vbox);
 	gtk_widget_show_all(vbox);
+	pango_font_description_free(font);
 }
 
 
