@@ -58,6 +58,7 @@ struct _Presenter
 
 	/* slideshow */
 	GtkWidget * sl_window;
+	GtkWidget * sl_toolbar;
 };
 
 
@@ -85,6 +86,7 @@ static void _presenter_on_save(gpointer data);
 static void _presenter_on_save_as(gpointer data);
 static void _presenter_on_select_all(gpointer data);
 static void _presenter_on_slideshow(gpointer data);
+static void _presenter_on_slideshow_close(gpointer data);
 static gboolean _presenter_on_slideshow_closex(gpointer data);
 #ifndef EMBEDDED
 static void _presenter_on_unselect_all(gpointer data);
@@ -111,6 +113,12 @@ static const DesktopAccel _presenter_accel[] =
 	{ NULL, 0, 0 }
 };
 #endif
+
+static const DesktopAccel _presenter_accel_slideshow[] =
+{
+	{ G_CALLBACK(_presenter_on_slideshow_close), 0, GDK_KEY_Escape },
+	{ NULL, 0, 0 }
+};
 
 #ifndef EMBEDDED
 static const DesktopMenu _presenter_menu_file[] =
@@ -491,14 +499,31 @@ static void _presenter_present(Presenter * presenter)
 
 static void _present_window(Presenter * presenter)
 {
+	GtkAccelGroup * group;
 	GdkColor black;
+	GtkWidget * vbox;
+	GtkToolItem * toolitem;
 
+	group = gtk_accel_group_new();
 	presenter->sl_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_add_accel_group(GTK_WINDOW(presenter->sl_window), group);
+	desktop_accel_create(_presenter_accel_slideshow, presenter, group);
+	g_object_unref(group);
 	gtk_window_set_keep_above(GTK_WINDOW(presenter->sl_window), TRUE);
 	memset(&black, 0, sizeof(black));
 	gtk_widget_modify_bg(presenter->sl_window, GTK_STATE_NORMAL, &black);
 	g_signal_connect_swapped(presenter->sl_window, "delete-event",
 			G_CALLBACK(_presenter_on_slideshow_closex), presenter);
+	vbox = gtk_vbox_new(FALSE, 0);
+	presenter->sl_toolbar = gtk_toolbar_new();
+	toolitem = gtk_tool_button_new_from_stock(GTK_STOCK_QUIT);
+	g_signal_connect_swapped(toolitem, "clicked", G_CALLBACK(
+				_presenter_on_slideshow_close), presenter);
+	gtk_toolbar_insert(GTK_TOOLBAR(presenter->sl_toolbar), toolitem, -1);
+	gtk_box_pack_start(GTK_BOX(vbox), presenter->sl_toolbar, FALSE, TRUE,
+			0);
+	gtk_container_add(GTK_CONTAINER(presenter->sl_window), vbox);
+	gtk_widget_show_all(vbox);
 }
 
 
@@ -632,12 +657,21 @@ static void _presenter_on_slideshow(gpointer data)
 }
 
 
-/* presenter_on_slideshow */
-static gboolean _presenter_on_slideshow_closex(gpointer data)
+/* presenter_on_slideshow_close */
+static void _presenter_on_slideshow_close(gpointer data)
 {
 	Presenter * presenter = data;
 
 	gtk_widget_hide(presenter->sl_window);
+}
+
+
+/* presenter_on_slideshow_closex */
+static gboolean _presenter_on_slideshow_closex(gpointer data)
+{
+	Presenter * presenter = data;
+
+	_presenter_on_slideshow_close(presenter);
 	return TRUE;
 }
 
