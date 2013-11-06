@@ -629,7 +629,9 @@ static void _presenter_on_new(gpointer data)
 /* presenter_on_open */
 static void _presenter_on_open(gpointer data)
 {
-	/* FIXME implement */
+	Presenter * presenter = data;
+
+	presenter_open_dialog(presenter);
 }
 
 
