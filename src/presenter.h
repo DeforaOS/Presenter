@@ -34,5 +34,8 @@ int presenter_error(Presenter * presenter, char const * message, int ret);
 int presenter_close(Presenter * presenter);
 int presenter_open(Presenter * presenter, char const * filename);
 int presenter_open_dialog(Presenter * presenter);
+int presenter_save(Presenter * presenter);
+int presenter_save_as(Presenter * presenter, char const * filename);
+int presenter_save_as_dialog(Presenter * presenter);
 
 #endif /* !PRESENTER_PRESENTER_H */

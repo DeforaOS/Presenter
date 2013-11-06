@@ -477,6 +477,50 @@ int presenter_open_dialog(Presenter * presenter)
 }
 
 
+/* presenter_save */
+int presenter_save(Presenter * presenter)
+{
+	if(presenter->filename == NULL)
+		return presenter_save_as_dialog(presenter);
+	/* FIXME implement */
+	return -1;
+}
+
+
+/* presenter_save_as */
+int presenter_save_as(Presenter * presenter, char const * filename)
+{
+	if(filename == NULL)
+		return presenter_save_as_dialog(presenter);
+	/* FIXME implement */
+	return -1;
+}
+
+
+/* presenter_save_as_dialog */
+int presenter_save_as_dialog(Presenter * presenter)
+{
+	int ret;
+	GtkWidget * dialog;
+	gchar * filename = NULL;
+
+	dialog = gtk_file_chooser_dialog_new(_("Save as..."),
+			GTK_WINDOW(presenter->window),
+			GTK_FILE_CHOOSER_ACTION_SAVE,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
+	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
+		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(
+					dialog));
+	gtk_widget_destroy(dialog);
+	if(filename == NULL)
+		return 0;
+	ret = presenter_save_as(presenter, filename);
+	g_free(filename);
+	return ret;
+}
+
+
 /* private */
 /* useful */
 /* presenter_present */
@@ -659,14 +703,18 @@ static void _presenter_on_properties(gpointer data)
 /* presenter_on_save */
 static void _presenter_on_save(gpointer data)
 {
-	/* FIXME implement */
+	Presenter * presenter = data;
+
+	presenter_save(presenter);
 }
 
 
 /* presenter_on_save_as */
 static void _presenter_on_save_as(gpointer data)
 {
-	/* FIXME implement */
+	Presenter * presenter = data;
+
+	presenter_save_as_dialog(presenter);
 }
 
 
