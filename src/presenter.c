@@ -276,6 +276,7 @@ Presenter * presenter_new(void)
 		return NULL;
 	presenter->filename = NULL;
 	presenter->config = config_new();
+	presenter->window = NULL;
 	/* check for errors */
 	if(presenter->config == NULL)
 	{
@@ -356,6 +357,8 @@ static void _new_set_title(Presenter * presenter)
 /* presenter_delete */
 void presenter_delete(Presenter * presenter)
 {
+	if(presenter->window != NULL)
+		gtk_widget_destroy(presenter->window);
 	if(presenter->config != NULL)
 		config_delete(presenter->config);
 	object_delete(presenter);
@@ -427,7 +430,7 @@ static gboolean _about_on_closex(gpointer data)
 int presenter_close(Presenter * presenter)
 {
 	/* FIXME check for unsaved changes */
-	presenter_delete(presenter);
+	gtk_widget_hide(presenter->window);
 	gtk_main_quit();
 	return 0;
 }
@@ -642,7 +645,7 @@ static void _presenter_on_close(gpointer data)
 {
 	Presenter * presenter = data;
 
-	_presenter_on_closex(presenter);
+	presenter_close(presenter);
 }
 
 
@@ -651,9 +654,8 @@ static gboolean _presenter_on_closex(gpointer data)
 {
 	Presenter * presenter = data;
 
-	if(presenter_close(presenter) == 0)
-		return TRUE;
-	return FALSE;
+	_presenter_on_close(presenter);
+	return TRUE;
 }
 
 
