@@ -35,6 +35,7 @@ struct _Presenter
 {
 	char * filename;
 
+	/* preferences */
 	Config * config;
 
 	/* widgets */
@@ -352,6 +353,8 @@ static void _new_set_title(Presenter * presenter)
 /* presenter_delete */
 void presenter_delete(Presenter * presenter)
 {
+	if(presenter->config != NULL)
+		config_delete(presenter->config);
 	object_delete(presenter);
 }
 
