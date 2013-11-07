@@ -28,6 +28,9 @@ typedef struct _Presenter Presenter;
 Presenter * presenter_new(void);
 void presenter_delete(Presenter * presenter);
 
+/* accessors */
+int presenter_set_monitor(Presenter * presenter, int monitor);
+
 /* useful */
 int presenter_error(Presenter * presenter, char const * message, int ret);
 

@@ -37,6 +37,7 @@ struct _Presenter
 
 	/* preferences */
 	Config * config;
+	int monitor;
 
 	/* widgets */
 	GtkWidget * window;
@@ -281,6 +282,8 @@ Presenter * presenter_new(void)
 		object_delete(presenter);
 		return NULL;
 	}
+	/* FIXME load the configuration */
+	presenter->monitor = -1;
 	/* widgets */
 	group = gtk_accel_group_new();
 	/* window */
@@ -356,6 +359,25 @@ void presenter_delete(Presenter * presenter)
 	if(presenter->config != NULL)
 		config_delete(presenter->config);
 	object_delete(presenter);
+}
+
+
+/* accessors */
+/* presenter_set_monitor */
+int presenter_set_monitor(Presenter * presenter, int monitor)
+{
+	GdkScreen * screen;
+
+	if(monitor < 0)
+	{
+		presenter->monitor = -1;
+		return 0;
+	}
+	screen = gdk_screen_get_default();
+	if(monitor >= gdk_screen_get_n_monitors(screen))
+		return -1;
+	presenter->monitor = monitor;
+	return 0;
 }
 
 
@@ -532,13 +554,17 @@ static void _present_window(Presenter * presenter);
 static void _presenter_present(Presenter * presenter)
 {
 	GdkScreen * screen;
+	int monitor = 0;
 	GdkRectangle rect;
 
 	if(presenter->sl_window == NULL)
 		_present_window(presenter);
 	/* (re-)configure the window */
 	screen = gdk_screen_get_default();
-	gdk_screen_get_monitor_geometry(screen, 0, &rect);
+	if(presenter->monitor >= 0 && presenter->monitor
+			< gdk_screen_get_n_monitors(screen))
+		monitor = presenter->monitor;
+	gdk_screen_get_monitor_geometry(screen, monitor, &rect);
 	gtk_window_move(GTK_WINDOW(presenter->sl_window), rect.x, rect.y);
 	gtk_window_resize(GTK_WINDOW(presenter->sl_window), rect.width,
 			rect.height);
