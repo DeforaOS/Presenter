@@ -16,6 +16,7 @@ static char const _license[] =
 "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n";
 
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <libintl.h>
 #include <gtk/gtk.h>
@@ -429,10 +430,49 @@ static gboolean _about_on_closex(gpointer data)
 /* presenter_close */
 int presenter_close(Presenter * presenter)
 {
-	/* FIXME check for unsaved changes */
+	int res;
+
+	/* FIXME really check for unsaved changes */
+	res = presenter_confirm(presenter, _("There are unsaved changes.\n"
+				"Discard or save them?"),
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			GTK_STOCK_DISCARD, GTK_RESPONSE_REJECT,
+			GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
+	if(res == GTK_RESPONSE_CANCEL || res == GTK_RESPONSE_DELETE_EVENT)
+		return 1;
+	else if(res == GTK_RESPONSE_ACCEPT && presenter_save(presenter) != TRUE)
+		return 1;
 	gtk_widget_hide(presenter->window);
 	gtk_main_quit();
 	return 0;
+}
+
+
+/* presenter_confirm */
+int presenter_confirm(Presenter * presenter, char const * message, ...)
+{
+	GtkWidget * dialog;
+	va_list ap;
+	char const * action;
+	int res;
+
+	dialog = gtk_message_dialog_new(GTK_WINDOW(presenter->window),
+			GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION,
+			GTK_BUTTONS_NONE,
+#if GTK_CHECK_VERSION(2, 6, 0)
+			"%s", _("Question"));
+	gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog),
+#endif
+			"%s", message);
+	va_start(ap, message);
+	while((action = va_arg(ap, char const *)) != NULL)
+		gtk_dialog_add_button(GTK_DIALOG(dialog),
+				action, va_arg(ap, int));
+	va_end(ap);
+	gtk_window_set_title(GTK_WINDOW(dialog), _("Question"));
+	res = gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+	return res;
 }
 
 

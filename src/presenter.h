@@ -32,6 +32,7 @@ void presenter_delete(Presenter * presenter);
 int presenter_set_monitor(Presenter * presenter, int monitor);
 
 /* useful */
+int presenter_confirm(Presenter * presenter, char const * message, ...);
 int presenter_error(Presenter * presenter, char const * message, int ret);
 
 int presenter_close(Presenter * presenter);
