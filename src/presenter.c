@@ -700,6 +700,110 @@ static void _preferences_on_response(GtkWidget * widget, gint response,
 }
 
 
+/* presenter_show_properties */
+static void _properties_set(Presenter * presenter);
+static void _properties_window(Presenter * presenter);
+/* callbacks */
+static void _properties_on_apply(gpointer data);
+static void _properties_on_cancel(gpointer data);
+static gboolean _properties_on_closex(gpointer data);
+static void _properties_on_ok(gpointer data);
+static void _properties_on_response(GtkWidget * widget, gint response,
+		gpointer data);
+
+void presenter_show_properties(Presenter * presenter, gboolean show)
+{
+	if(presenter->pp_window == NULL)
+		_properties_window(presenter);
+	if(show)
+		gtk_window_present(GTK_WINDOW(presenter->pp_window));
+	else
+		gtk_widget_hide(presenter->pp_window);
+}
+
+static void _properties_set(Presenter * presenter)
+{
+	/* FIXME implement */
+}
+
+static void _properties_window(Presenter * presenter)
+{
+	GtkWidget * vbox;
+
+	presenter->pp_window = gtk_dialog_new_with_buttons(
+			/* FIXME append the filename (if any) */
+			_("Properties of (untitled)"),
+			GTK_WINDOW(presenter->window),
+			GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			GTK_STOCK_APPLY, GTK_RESPONSE_APPLY,
+			GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	g_signal_connect_swapped(presenter->pp_window, "delete-event",
+			G_CALLBACK(_properties_on_closex), presenter);
+	g_signal_connect(presenter->pp_window, "response", G_CALLBACK(
+				_properties_on_response), presenter);
+#if GTK_CHECK_VERSION(2, 14, 0)
+	vbox = gtk_dialog_get_content_area(GTK_DIALOG(presenter->pp_window));
+#else
+	vbox = GTK_DIALOG(player->pp_window)->vbox;
+#endif
+	gtk_box_set_spacing(GTK_BOX(vbox), 4);
+	/* FIXME implement */
+	_properties_set(presenter);
+	gtk_widget_show_all(vbox);
+}
+
+static void _properties_on_apply(gpointer data)
+{
+	/* FIXME implement */
+}
+
+static void _properties_on_cancel(gpointer data)
+{
+	Presenter * presenter = data;
+
+	_properties_set(presenter);
+}
+
+static gboolean _properties_on_closex(gpointer data)
+{
+	Presenter * presenter = data;
+
+	gtk_widget_hide(presenter->pp_window);
+	_properties_on_cancel(presenter);
+	return TRUE;
+}
+
+static void _properties_on_ok(gpointer data)
+{
+	Presenter * presenter = data;
+
+	_properties_on_apply(presenter);
+	/* FIXME fully implement (save...) */
+}
+
+static void _properties_on_response(GtkWidget * widget, gint response,
+		gpointer data)
+{
+	Presenter * presenter = data;
+
+	switch(response)
+	{
+		case GTK_RESPONSE_APPLY:
+			_properties_on_apply(presenter);
+			break;
+		case GTK_RESPONSE_CANCEL:
+			gtk_widget_hide(presenter->pp_window);
+			_properties_on_cancel(presenter);
+			break;
+		case GTK_RESPONSE_OK:
+			gtk_widget_hide(presenter->pp_window);
+			_properties_on_ok(presenter);
+			break;
+	}
+}
+
+
 /* private */
 /* useful */
 /* presenter_present */
@@ -880,7 +984,9 @@ static void _presenter_on_preferences(gpointer data)
 /* presenter_on_properties */
 static void _presenter_on_properties(gpointer data)
 {
-	/* FIXME implement */
+	Presenter * presenter = data;
+
+	presenter_show_properties(presenter, TRUE);
 }
 
 
