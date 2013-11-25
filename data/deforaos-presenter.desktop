@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Presenter
 Comment=A presentation tool
+TryExec=presenter
 Exec=presenter
 Icon=x-office-presentation
 Type=Application
