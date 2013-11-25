@@ -49,14 +49,18 @@ struct _Presenter
 	GtkWidget * infobar;
 	GtkWidget * infobar_label;
 #endif
-	/* preferences */
-	GtkWidget * pr_window;
 	/* find */
 	GtkWidget * fi_dialog;
 	GtkListStore * fi_store;
 	GtkWidget * fi_text;
 	/* about */
 	GtkWidget * ab_window;
+
+	/* properties */
+	GtkWidget * pp_window;
+
+	/* preferences */
+	GtkWidget * pr_window;
 
 	/* slideshow */
 	GtkWidget * sl_window;
@@ -339,6 +343,10 @@ Presenter * presenter_new(void)
 	gtk_widget_show_all(presenter->window);
 	/* about */
 	presenter->ab_window = NULL;
+	/* properties */
+	presenter->pp_window = NULL;
+	/* preferences */
+	presenter->pr_window = NULL;
 	/* slideshow */
 	presenter->sl_window = NULL;
 	return presenter;
@@ -589,6 +597,109 @@ int presenter_save_as_dialog(Presenter * presenter)
 }
 
 
+/* presenter_show_preferences */
+static void _preferences_set(Presenter * presenter);
+static void _preferences_window(Presenter * presenter);
+/* callbacks */
+static void _preferences_on_apply(gpointer data);
+static void _preferences_on_cancel(gpointer data);
+static gboolean _preferences_on_closex(gpointer data);
+static void _preferences_on_ok(gpointer data);
+static void _preferences_on_response(GtkWidget * widget, gint response,
+		gpointer data);
+
+void presenter_show_preferences(Presenter * presenter, gboolean show)
+{
+	if(presenter->pr_window == NULL)
+		_preferences_window(presenter);
+	if(show)
+		gtk_window_present(GTK_WINDOW(presenter->pr_window));
+	else
+		gtk_widget_hide(presenter->pr_window);
+}
+
+static void _preferences_set(Presenter * presenter)
+{
+	/* FIXME implement */
+}
+
+static void _preferences_window(Presenter * presenter)
+{
+	GtkWidget * vbox;
+
+	presenter->pr_window = gtk_dialog_new_with_buttons(
+			_("Presentation tool preferences"),
+			GTK_WINDOW(presenter->window),
+			GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			GTK_STOCK_APPLY, GTK_RESPONSE_APPLY,
+			GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	g_signal_connect_swapped(presenter->pr_window, "delete-event",
+			G_CALLBACK(_preferences_on_closex), presenter);
+	g_signal_connect(presenter->pr_window, "response", G_CALLBACK(
+				_preferences_on_response), presenter);
+#if GTK_CHECK_VERSION(2, 14, 0)
+	vbox = gtk_dialog_get_content_area(GTK_DIALOG(presenter->pr_window));
+#else
+	vbox = GTK_DIALOG(player->pr_window)->vbox;
+#endif
+	gtk_box_set_spacing(GTK_BOX(vbox), 4);
+	/* FIXME implement */
+	_preferences_set(presenter);
+	gtk_widget_show_all(vbox);
+}
+
+static void _preferences_on_apply(gpointer data)
+{
+	/* FIXME implement */
+}
+
+static void _preferences_on_cancel(gpointer data)
+{
+	Presenter * presenter = data;
+
+	_preferences_set(presenter);
+}
+
+static gboolean _preferences_on_closex(gpointer data)
+{
+	Presenter * presenter = data;
+
+	gtk_widget_hide(presenter->pr_window);
+	_preferences_on_cancel(presenter);
+	return TRUE;
+}
+
+static void _preferences_on_ok(gpointer data)
+{
+	Presenter * presenter = data;
+
+	_preferences_on_apply(presenter);
+	/* FIXME fully implement (save...) */
+}
+
+static void _preferences_on_response(GtkWidget * widget, gint response,
+		gpointer data)
+{
+	Presenter * presenter = data;
+
+	switch(response)
+	{
+		case GTK_RESPONSE_APPLY:
+			_preferences_on_apply(presenter);
+			break;
+		case GTK_RESPONSE_CANCEL:
+			gtk_widget_hide(presenter->pr_window);
+			_preferences_on_cancel(presenter);
+			break;
+		case GTK_RESPONSE_OK:
+			gtk_widget_hide(presenter->pr_window);
+			_preferences_on_ok(presenter);
+			break;
+	}
+}
+
+
 /* private */
 /* useful */
 /* presenter_present */
@@ -760,7 +871,9 @@ static void _presenter_on_paste(gpointer data)
 /* presenter_on_preferences */
 static void _presenter_on_preferences(gpointer data)
 {
-	/* FIXME implement */
+	Presenter * presenter = data;
+
+	presenter_show_preferences(presenter, TRUE);
 }
 
 
