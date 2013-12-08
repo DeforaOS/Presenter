@@ -28,11 +28,22 @@
 #ifndef PROGNAME
 # define PROGNAME	"presenter"
 #endif
+#ifndef PREFIX
+# define PREFIX		"/usr/local"
+#endif
+#ifndef DATADIR
+# define DATADIR	PREFIX "/share"
+#endif
+#ifndef LOCALEDIR
+# define LOCALEDIR	DATADIR "/locale"
+#endif
 
 
 /* private */
 /* prototypes */
 static int _presenter(char const * filename);
+
+static int _error(char const * message, int ret);
 static int _usage(void);
 
 
@@ -52,6 +63,15 @@ static int _presenter(char const * filename)
 }
 
 
+/* error */
+static int _error(char const * message, int ret)
+{
+	fputs(PROGNAME ": ", stderr);
+	perror(message);
+	return ret;
+}
+
+
 /* usage */
 static int _usage(void)
 {
@@ -67,6 +87,10 @@ int main(int argc, char * argv[])
 {
 	int o;
 
+	if(setlocale(LC_ALL, "") == NULL)
+		_error("setlocale", 1);
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 	gtk_init(&argc, &argv);
 	while((o = getopt(argc, argv, "")) != -1)
 		switch(o)
