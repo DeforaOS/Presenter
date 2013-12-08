@@ -2,7 +2,7 @@
 Name=Presenter
 Comment=A presentation tool
 TryExec=presenter
-Exec=presenter
+Exec=presenter %f
 Icon=x-office-presentation
 Type=Application
 Categories=Office;GTK;

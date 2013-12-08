@@ -50,7 +50,7 @@ static int _presenter(char const * filename)
 /* usage */
 static int _usage(void)
 {
-	fputs(_("Usage: presenter\n"), stderr);
+	fputs(_("Usage: presenter [filename]\n"), stderr);
 	return 1;
 }
 
