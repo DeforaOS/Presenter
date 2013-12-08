@@ -24,6 +24,11 @@
 #include "../config.h"
 #define _(string) gettext(string)
 
+/* constants */
+#ifndef PROGNAME
+# define PROGNAME	"presenter"
+#endif
+
 
 /* private */
 /* prototypes */
@@ -50,7 +55,7 @@ static int _presenter(char const * filename)
 /* usage */
 static int _usage(void)
 {
-	fputs(_("Usage: presenter [filename]\n"), stderr);
+	fprintf(stderr, _("Usage: %s [filename]\n"), PROGNAME);
 	return 1;
 }
 
