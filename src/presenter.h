@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2013 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2013-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Desktop Presenter */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,10 @@
 #ifndef PRESENTER_PRESENTER_H
 # define PRESENTER_PRESENTER_H
 
+# include "Presenter.h"
+
 
 /* public */
-/* types */
-typedef struct _Presenter Presenter;
-
-
 /* functions */
 /* essential */
 Presenter * presenter_new(void);
@@ -41,5 +39,9 @@ int presenter_open_dialog(Presenter * presenter);
 int presenter_save(Presenter * presenter);
 int presenter_save_as(Presenter * presenter, char const * filename);
 int presenter_save_as_dialog(Presenter * presenter);
+
+/* slide plug-ins */
+int presenter_slide_load(Presenter * presenter, char const * type);
+int presenter_slide_load_all(Presenter * presenter);
 
 #endif /* !PRESENTER_PRESENTER_H */

@@ -1,10 +1,11 @@
+SUBDIRS	= slides
 TARGETS	= presenter
 PREFIX	= /usr/local
 DESTDIR	=
 BINDIR	= $(PREFIX)/bin
 SBINDIR	= $(PREFIX)/sbin
 CC	= cc
-CPPFLAGSF=
+CPPFLAGSF= -I ../include
 CPPFLAGS=
 CFLAGSF	= -W `pkg-config --cflags libDesktop`
 CFLAGS	= -Wall -g -O2
@@ -15,32 +16,46 @@ MKDIR	= mkdir -m 0755 -p
 INSTALL	= install
 
 
-all: $(TARGETS)
+all: subdirs $(TARGETS)
 
-presenter_OBJS = presenter.o main.o
+subdirs:
+	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE)) || exit; done
+
+presenter_OBJS = document.o presenter.o slide.o main.o
 presenter_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 presenter_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
 presenter: $(presenter_OBJS)
 	$(CC) -o presenter $(presenter_OBJS) $(presenter_LDFLAGS)
 
-presenter.o: presenter.c presenter.h ../config.h
+document.o: document.c document.h slide.h ../config.h
+	$(CC) $(presenter_CFLAGS) -c document.c
+
+presenter.o: presenter.c document.h presenter.h slide.h ../config.h
 	$(CC) -D PREFIX=\"$(PREFIX)\" $(presenter_CFLAGS) -c presenter.c
+
+slide.o: slide.c slide.h ../config.h
+	$(CC) $(presenter_CFLAGS) -c slide.c
 
 main.o: main.c presenter.h ../config.h
 	$(CC) $(presenter_CFLAGS) -c main.c
 
 clean:
+	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) clean) || exit; done
 	$(RM) -- $(presenter_OBJS)
 
-distclean: clean
+distclean:
+	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) distclean) || exit; done
+	$(RM) -- $(presenter_OBJS)
 	$(RM) -- $(TARGETS)
 
 install: $(TARGETS)
+	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) install) || exit; done
 	$(MKDIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 0755 presenter $(DESTDIR)$(BINDIR)/presenter
 
 uninstall:
+	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) uninstall) || exit; done
 	$(RM) -- $(DESTDIR)$(BINDIR)/presenter
 
-.PHONY: all clean distclean install uninstall
+.PHONY: all subdirs clean distclean install uninstall

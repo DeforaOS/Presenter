@@ -1,6 +1,6 @@
 PACKAGE	= Presenter
 VERSION	= 0.0.0
-SUBDIRS	= data doc po src
+SUBDIRS	= data doc include po src
 RM	= rm -f
 LN	= ln -f
 TAR	= tar -czvf
@@ -28,16 +28,31 @@ dist:
 		$(PACKAGE)-$(VERSION)/doc/docbook.sh \
 		$(PACKAGE)-$(VERSION)/doc/presenter.xml \
 		$(PACKAGE)-$(VERSION)/doc/project.conf \
+		$(PACKAGE)-$(VERSION)/include/Presenter.h \
+		$(PACKAGE)-$(VERSION)/include/Makefile \
+		$(PACKAGE)-$(VERSION)/include/project.conf \
+		$(PACKAGE)-$(VERSION)/include/Presenter/presenter.h \
+		$(PACKAGE)-$(VERSION)/include/Presenter/slide.h \
+		$(PACKAGE)-$(VERSION)/include/Presenter/Makefile \
+		$(PACKAGE)-$(VERSION)/include/Presenter/project.conf \
 		$(PACKAGE)-$(VERSION)/po/Makefile \
 		$(PACKAGE)-$(VERSION)/po/gettext.sh \
 		$(PACKAGE)-$(VERSION)/po/POTFILES \
 		$(PACKAGE)-$(VERSION)/po/fr.po \
 		$(PACKAGE)-$(VERSION)/po/project.conf \
+		$(PACKAGE)-$(VERSION)/src/document.c \
 		$(PACKAGE)-$(VERSION)/src/presenter.c \
+		$(PACKAGE)-$(VERSION)/src/slide.c \
 		$(PACKAGE)-$(VERSION)/src/main.c \
 		$(PACKAGE)-$(VERSION)/src/Makefile \
+		$(PACKAGE)-$(VERSION)/src/document.h \
 		$(PACKAGE)-$(VERSION)/src/presenter.h \
+		$(PACKAGE)-$(VERSION)/src/slide.h \
 		$(PACKAGE)-$(VERSION)/src/project.conf \
+		$(PACKAGE)-$(VERSION)/src/slides/embed.c \
+		$(PACKAGE)-$(VERSION)/src/slides/title.c \
+		$(PACKAGE)-$(VERSION)/src/slides/Makefile \
+		$(PACKAGE)-$(VERSION)/src/slides/project.conf \
 		$(PACKAGE)-$(VERSION)/Makefile \
 		$(PACKAGE)-$(VERSION)/config.h \
 		$(PACKAGE)-$(VERSION)/config.sh \

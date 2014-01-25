@@ -1,6 +1,6 @@
 /* $Id$ */
 static char const _copyright[] =
-"Copyright © 2013 Pierre Pronchery <khorben@defora.org>";
+"Copyright © 2013-2014 Pierre Pronchery <khorben@defora.org>";
 /* This file is part of DeforaOS Desktop Presenter */
 static char const _license[] =
 "This program is free software: you can redistribute it and/or modify\n"
@@ -16,29 +16,68 @@ static char const _license[] =
 "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n";
 
 
+
+#include <dirent.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
 #include <libintl.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <System.h>
 #include <Desktop.h>
+#include "document.h"
 #include "presenter.h"
 #include "../config.h"
 #define _(string) gettext(string)
 #define N_(string) (string)
 
+/* constants */
+#ifndef PROGNAME
+# define PROGNAME	"presenter"
+#endif
+#ifndef PREFIX
+# define PREFIX		"/usr/local"
+#endif
+#ifndef LIBDIR
+# define LIBDIR		PREFIX "/lib"
+#endif
+#ifndef PLUGINDIR
+# define PLUGINDIR	LIBDIR "/" PACKAGE
+#endif
+#ifndef SLIDESDIR
+# define SLIDESDIR	PLUGINDIR "/slides"
+#endif
+
 
 /* Presenter */
 /* private */
 /* types */
+struct _PresenterSlidePlugin
+{
+	String * type;
+	Plugin * plugin;
+	PresenterSlideDefinition * definition;
+	PresenterSlidePlugin * slide;
+};
+
 struct _Presenter
 {
-	char * filename;
+	PresenterDocument * document;
 
 	/* preferences */
 	Config * config;
 	int monitor;
+
+	/* slides */
+	PresenterSlideHelper s_helper;
+	PresenterSlidePlugin * s_plugins;
+	size_t s_plugins_cnt;
+
+	/* internal */
+	guint source;
 
 	/* widgets */
 	GtkWidget * window;
@@ -83,6 +122,7 @@ static void _presenter_on_contents(gpointer data);
 static void _presenter_on_copy(gpointer data);
 static void _presenter_on_cut(gpointer data);
 static void _presenter_on_find(gpointer data);
+static gboolean _presenter_on_idle(gpointer data);
 static void _presenter_on_insert_file(gpointer data);
 static void _presenter_on_new(gpointer data);
 static void _presenter_on_open(gpointer data);
@@ -276,20 +316,30 @@ Presenter * presenter_new(void)
 	GtkAccelGroup * group;
 	GtkWidget * vbox;
 	GtkWidget * widget;
+	const GdkColor black = { 0x0, 0x0000, 0x0000, 0x0000 };
+	const GdkColor white = { 0x0, 0xffff, 0xffff, 0xffff };
 
 	if((presenter = object_new(sizeof(*presenter))) == NULL)
 		return NULL;
-	presenter->filename = NULL;
+	presenter->document = presenterdocument_new(NULL);
 	presenter->config = config_new();
 	presenter->window = NULL;
 	/* check for errors */
-	if(presenter->config == NULL)
+	if(presenter->document == NULL || presenter->config == NULL)
 	{
 		object_delete(presenter);
 		return NULL;
 	}
 	/* FIXME load the configuration */
 	presenter->monitor = -1;
+	/* slides */
+	presenter->s_helper.presenter = presenter;
+	presenter->s_helper.background = black;
+	presenter->s_helper.foreground = white;
+	presenter->s_plugins = NULL;
+	presenter->s_plugins_cnt = 0;
+	/* internal */
+	presenter->source = 0;
 	/* widgets */
 	group = gtk_accel_group_new();
 	/* window */
@@ -349,16 +399,18 @@ Presenter * presenter_new(void)
 	presenter->pr_window = NULL;
 	/* slideshow */
 	presenter->sl_window = NULL;
+	presenter->source = g_idle_add(_presenter_on_idle, presenter);
 	return presenter;
 }
 
 static void _new_set_title(Presenter * presenter)
 {
+	char const * filename;
 	char buf[256];
 
+	filename = presenterdocument_get_filename(presenter->document);
 	snprintf(buf, sizeof(buf), "%s%s", _("Presenter - "),
-			(presenter->filename == NULL) ? _("(Untitled)")
-			: presenter->filename);
+			(filename == NULL) ? _("(Untitled)") : filename);
 	gtk_window_set_title(GTK_WINDOW(presenter->window), buf);
 }
 
@@ -366,6 +418,21 @@ static void _new_set_title(Presenter * presenter)
 /* presenter_delete */
 void presenter_delete(Presenter * presenter)
 {
+	size_t i;
+
+	/* internal */
+	if(presenter->source != 0)
+		g_source_remove(presenter->source);
+	/* slides */
+	for(i = 0; i < presenter->s_plugins_cnt; i++)
+	{
+		presenter->s_plugins[i].definition->destroy(
+				presenter->s_plugins[i].slide);
+		plugin_delete(presenter->s_plugins[i].plugin);
+		string_delete(presenter->s_plugins[i].type);
+	}
+	free(presenter->s_plugins);
+	/* widgets */
 	if(presenter->window != NULL)
 		gtk_widget_destroy(presenter->window);
 	if(presenter->config != NULL)
@@ -485,8 +552,12 @@ int presenter_confirm(Presenter * presenter, char const * message, ...)
 
 
 /* presenter_error */
+static int _error_text(char const * message, int ret);
+
 int presenter_error(Presenter * presenter, char const * message, int ret)
 {
+	if(presenter == NULL)
+		return _error_text(message, ret);
 #if GTK_CHECK_VERSION(2, 18, 0)
 	gtk_label_set_text(GTK_LABEL(presenter->infobar_label), message);
 	gtk_widget_show(presenter->infobar);
@@ -509,14 +580,25 @@ int presenter_error(Presenter * presenter, char const * message, int ret)
 	return ret;
 }
 
+static int _error_text(char const * message, int ret)
+{
+	fprintf(stderr, "%s: %s\n", PROGNAME, message);
+	return ret;
+}
+
 
 /* presenter_open */
 int presenter_open(Presenter * presenter, char const * filename)
 {
+	PresenterDocument * document;
+
 	if(filename == NULL)
 		return presenter_open_dialog(presenter);
-	/* FIXME implement */
-	return -1;
+	if((document = presenterdocument_new(filename)) == NULL)
+		return -presenter_error(presenter, error_get(), 1);
+	presenter_close(presenter);
+	presenter->document = document;
+	return 0;
 }
 
 
@@ -556,10 +638,12 @@ int presenter_open_dialog(Presenter * presenter)
 /* presenter_save */
 int presenter_save(Presenter * presenter)
 {
-	if(presenter->filename == NULL)
+	char const * filename;
+
+	if((filename = presenterdocument_get_filename(presenter->document))
+			== NULL)
 		return presenter_save_as_dialog(presenter);
-	/* FIXME implement */
-	return -1;
+	return presenterdocument_save(presenter->document);
 }
 
 
@@ -568,8 +652,7 @@ int presenter_save_as(Presenter * presenter, char const * filename)
 {
 	if(filename == NULL)
 		return presenter_save_as_dialog(presenter);
-	/* FIXME implement */
-	return -1;
+	return presenterdocument_save_as(presenter->document, filename);
 }
 
 
@@ -808,6 +891,8 @@ static void _properties_on_response(GtkWidget * widget, gint response,
 /* useful */
 /* presenter_present */
 static void _present_window(Presenter * presenter);
+static PresenterSlidePlugin * _present_window_slide_plugin(
+		Presenter * presenter, char const * type);
 
 static void _presenter_present(Presenter * presenter)
 {
@@ -834,10 +919,14 @@ static void _present_window(Presenter * presenter)
 {
 	PangoFontDescription * font;
 	GtkAccelGroup * group;
-	GdkColor black = { 0x0, 0x0000, 0x0000, 0x0000 };
-	GdkColor white = { 0x0, 0xffff, 0xffff, 0xffff };
 	GtkWidget * vbox;
 	GtkToolItem * toolitem;
+#if 1
+	const char const * slides[] = { "title", "embed" };
+	size_t i;
+	PresenterSlidePlugin * sp;
+	GtkWidget * widget;
+#endif
 
 	/* font */
 	font = pango_font_description_new();
@@ -850,7 +939,8 @@ static void _present_window(Presenter * presenter)
 	desktop_accel_create(_presenter_accel_slideshow, presenter, group);
 	g_object_unref(group);
 	gtk_window_set_keep_above(GTK_WINDOW(presenter->sl_window), TRUE);
-	gtk_widget_modify_bg(presenter->sl_window, GTK_STATE_NORMAL, &black);
+	gtk_widget_modify_bg(presenter->sl_window, GTK_STATE_NORMAL,
+			&presenter->s_helper.background);
 	g_signal_connect_swapped(presenter->sl_window, "delete-event",
 			G_CALLBACK(_presenter_on_slideshow_closex), presenter);
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -872,6 +962,21 @@ static void _present_window(Presenter * presenter)
 	gtk_toolbar_insert(GTK_TOOLBAR(presenter->sl_toolbar), toolitem, -1);
 	gtk_box_pack_start(GTK_BOX(vbox), presenter->sl_toolbar, FALSE, TRUE,
 			0);
+#if 1
+	/* slides */
+	for(i = 0; i < sizeof(slides) / sizeof(*slides); i++)
+	{
+		if((sp = _present_window_slide_plugin(presenter, slides[i]))
+				== NULL)
+			/* XXX report error */
+			break;
+		if((widget = sp->definition->get_widget(sp->slide, NULL))
+				== NULL)
+			/* XXX report error */
+			break;
+		gtk_box_pack_start(GTK_BOX(vbox), widget, TRUE, TRUE, 0);
+	}
+#else
 	/* title */
 	/* FIXME really implement */
 	presenter->sl_title = gtk_label_new("<Insert title here>");
@@ -879,9 +984,94 @@ static void _present_window(Presenter * presenter)
 	gtk_widget_modify_font(presenter->sl_title, font);
 	gtk_box_pack_start(GTK_BOX(vbox), presenter->sl_title, FALSE, TRUE,
 			0);
+#endif
 	gtk_container_add(GTK_CONTAINER(presenter->sl_window), vbox);
 	gtk_widget_show_all(vbox);
 	pango_font_description_free(font);
+}
+
+static PresenterSlidePlugin * _present_window_slide_plugin(
+		Presenter * presenter, char const * type)
+{
+	size_t i;
+
+	if(presenter_slide_load(presenter, type) != 0)
+		return NULL;
+	/* XXX optimize (don't look for the proper type twice) */
+	for(i = 0; i < presenter->s_plugins_cnt; i++)
+		if(strcmp(presenter->s_plugins[i].type, type) == 0)
+			return &presenter->s_plugins[i];
+	return NULL;
+}
+
+
+/* presenter_slide_load */
+int presenter_slide_load(Presenter * presenter, char const * type)
+{
+	size_t i;
+	PresenterSlidePlugin * q;
+
+#ifdef DEBUG
+	fprintf(stderr, "DEBUG: %s() \"%s\"\n", __func__, type);
+#endif
+	for(i = 0; i < presenter->s_plugins_cnt; i++)
+		if(strcmp(presenter->s_plugins[i].type, type) == 0)
+			/* this plug-in was already loaded */
+			return 0;
+	if((q = realloc(presenter->s_plugins, sizeof(*q)
+					* (presenter->s_plugins_cnt + 1)))
+			== NULL)
+		return -presenter_error(NULL, strerror(errno), 1);
+	presenter->s_plugins = q;
+	q = &presenter->s_plugins[presenter->s_plugins_cnt];
+	if((q->plugin = plugin_new(LIBDIR, PACKAGE, "slides", type)) == NULL)
+		return -presenter_error(NULL, error_get(), 1);
+	if((q->type = string_new(type)) == NULL
+			|| (q->definition = plugin_lookup(q->plugin, "slide"))
+			== NULL
+			|| q->definition->init == NULL
+			|| q->definition->destroy == NULL
+			|| (q->slide = q->definition->init(
+					&presenter->s_helper)) == NULL)
+	{
+		/* FIXME the error may not have been set */
+		string_delete(q->type);
+		plugin_delete(q->plugin);
+		return -presenter_error(NULL, error_get(), 1);
+	}
+	presenter->s_plugins_cnt++;
+	return 0;
+}
+
+
+/* presenter_slide_load_all */
+int presenter_slide_load_all(Presenter * presenter)
+{
+	int ret = 0;
+#ifdef __APPLE__
+	const char ext[] = ".dylib";
+#else
+	const char ext[] = ".so";
+#endif
+	DIR * dir;
+	struct dirent * de;
+	size_t len;
+
+	if((dir = opendir(SLIDESDIR)) == NULL)
+		return -presenter_error(NULL, strerror(errno), 1);
+	while((de = readdir(dir)) != NULL)
+	{
+		if(de->d_name[0] == '.'
+				|| (len = strlen(de->d_name)) < sizeof(ext)
+				|| strncmp(&de->d_name[len - sizeof(ext) + 1],
+					ext, sizeof(ext)) != 0)
+			continue;
+		de->d_name[len - sizeof(ext) + 1] = '\0';
+		if(presenter_slide_load(presenter, de->d_name) != 0)
+			ret = -1;
+	}
+	closedir(dir);
+	return ret;
 }
 
 
@@ -939,6 +1129,17 @@ static void _presenter_on_cut(gpointer data)
 static void _presenter_on_find(gpointer data)
 {
 	/* FIXME implement */
+}
+
+
+/* presenter_on_idle */
+static gboolean _presenter_on_idle(gpointer data)
+{
+	Presenter * presenter = data;
+
+	presenter->source = 0;
+	presenter_slide_load_all(presenter);
+	return FALSE;
 }
 
 
