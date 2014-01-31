@@ -812,10 +812,13 @@ static void _properties_set(Presenter * presenter)
 static void _properties_window(Presenter * presenter)
 {
 	GtkWidget * vbox;
+	char const * filename;
+	char buf[256];
 
-	presenter->pp_window = gtk_dialog_new_with_buttons(
-			/* FIXME append the filename (if any) */
-			_("Properties of (untitled)"),
+	filename = presenterdocument_get_filename(presenter->document);
+	snprintf(buf, sizeof(buf), _("Properties of %s"), (filename != NULL)
+			? filename : _("(Untitled"));
+	presenter->pp_window = gtk_dialog_new_with_buttons(buf,
 			GTK_WINDOW(presenter->window),
 			GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
