@@ -517,8 +517,12 @@ int presenter_close(Presenter * presenter)
 		return 1;
 	else if(res == GTK_RESPONSE_ACCEPT && presenter_save(presenter) != TRUE)
 		return 1;
+#if 0
 	gtk_widget_hide(presenter->window);
 	gtk_main_quit();
+#else
+	/* FIXME reset the document */
+#endif
 	return 0;
 }
 
@@ -1088,12 +1092,15 @@ static void _presenter_on_about(gpointer data)
 	presenter_about(presenter);
 }
 #endif
+
+
 /* presenter_on_close */
 static void _presenter_on_close(gpointer data)
 {
 	Presenter * presenter = data;
 
-	presenter_close(presenter);
+	if(presenter_close(presenter) == 0)
+		gtk_main_quit();
 }
 
 
