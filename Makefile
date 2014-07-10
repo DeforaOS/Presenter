@@ -26,6 +26,8 @@ dist:
 		$(PACKAGE)-$(VERSION)/data/project.conf \
 		$(PACKAGE)-$(VERSION)/doc/Makefile \
 		$(PACKAGE)-$(VERSION)/doc/docbook.sh \
+		$(PACKAGE)-$(VERSION)/doc/manual.css.xml \
+		$(PACKAGE)-$(VERSION)/doc/presenter.css.xml \
 		$(PACKAGE)-$(VERSION)/doc/presenter.xml \
 		$(PACKAGE)-$(VERSION)/doc/project.conf \
 		$(PACKAGE)-$(VERSION)/include/Presenter.h \

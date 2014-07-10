@@ -12,7 +12,7 @@ all: $(TARGETS)
 presenter.1: presenter.xml
 	./docbook.sh -P "$(PREFIX)" -- "presenter.1"
 
-presenter.html: presenter.xml
+presenter.html: manual.css.xml presenter.css.xml presenter.xml
 	./docbook.sh -P "$(PREFIX)" -- "presenter.html"
 
 clean:
