@@ -17,6 +17,7 @@ presenter.html: manual.css.xml presenter.css.xml presenter.xml
 
 clean:
 	$(RM) -- $(presenter.1_OBJS) $(presenter.html_OBJS)
+	./docbook.sh -c -P "$(PREFIX)" -- "presenter.1"
 	./docbook.sh -c -P "$(PREFIX)" -- "presenter.html"
 
 distclean: clean
