@@ -1,5 +1,6 @@
 SUBDIRS	= slides
-TARGETS	= presenter
+TARGETS	= $(OBJDIR)presenter
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 BINDIR	= $(PREFIX)/bin
@@ -21,24 +22,24 @@ all: subdirs $(TARGETS)
 subdirs:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE)) || exit; done
 
-presenter_OBJS = document.o presenter.o slide.o main.o
+presenter_OBJS = $(OBJDIR)document.o $(OBJDIR)presenter.o $(OBJDIR)slide.o $(OBJDIR)main.o
 presenter_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 presenter_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-presenter: $(presenter_OBJS)
-	$(CC) -o presenter $(presenter_OBJS) $(presenter_LDFLAGS)
+$(OBJDIR)presenter: $(presenter_OBJS)
+	$(CC) -o $(OBJDIR)presenter $(presenter_OBJS) $(presenter_LDFLAGS)
 
-document.o: document.c document.h slide.h ../config.h
-	$(CC) $(presenter_CFLAGS) -c document.c
+$(OBJDIR)document.o: document.c document.h slide.h ../config.h
+	$(CC) $(presenter_CFLAGS) -o $(OBJDIR)document.o -c document.c
 
-presenter.o: presenter.c document.h presenter.h slide.h ../config.h
-	$(CC) -D PREFIX=\"$(PREFIX)\" $(presenter_CFLAGS) -c presenter.c
+$(OBJDIR)presenter.o: presenter.c document.h presenter.h slide.h ../config.h
+	$(CC) -D PREFIX=\"$(PREFIX)\" $(presenter_CFLAGS) -o $(OBJDIR)presenter.o -c presenter.c
 
-slide.o: slide.c slide.h ../config.h
-	$(CC) $(presenter_CFLAGS) -c slide.c
+$(OBJDIR)slide.o: slide.c slide.h ../config.h
+	$(CC) $(presenter_CFLAGS) -o $(OBJDIR)slide.o -c slide.c
 
-main.o: main.c presenter.h ../config.h
-	$(CC) $(presenter_CFLAGS) -c main.c
+$(OBJDIR)main.o: main.c presenter.h ../config.h
+	$(CC) $(presenter_CFLAGS) -o $(OBJDIR)main.o -c main.c
 
 clean:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) clean) || exit; done
@@ -52,7 +53,7 @@ distclean:
 install: $(TARGETS)
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) install) || exit; done
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 presenter $(DESTDIR)$(BINDIR)/presenter
+	$(INSTALL) -m 0755 $(OBJDIR)presenter $(DESTDIR)$(BINDIR)/presenter
 
 uninstall:
 	@for i in $(SUBDIRS); do (cd "$$i" && $(MAKE) uninstall) || exit; done

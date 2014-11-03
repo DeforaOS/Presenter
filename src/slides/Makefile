@@ -1,4 +1,5 @@
-TARGETS	= embed.so title.so
+TARGETS	= $(OBJDIR)embed.so $(OBJDIR)title.so
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 LIBDIR	= $(PREFIX)/lib
@@ -19,25 +20,25 @@ INSTALL	= install
 
 all: $(TARGETS)
 
-embed_OBJS = embed.o
+embed_OBJS = $(OBJDIR)embed.o
 embed_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 embed_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-embed.so: $(embed_OBJS)
-	$(CCSHARED) -o embed.so $(embed_OBJS) $(embed_LDFLAGS)
+$(OBJDIR)embed.so: $(embed_OBJS)
+	$(CCSHARED) -o $(OBJDIR)embed.so $(embed_OBJS) $(embed_LDFLAGS)
 
-title_OBJS = title.o
+title_OBJS = $(OBJDIR)title.o
 title_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 title_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-title.so: $(title_OBJS)
-	$(CCSHARED) -o title.so $(title_OBJS) $(title_LDFLAGS)
+$(OBJDIR)title.so: $(title_OBJS)
+	$(CCSHARED) -o $(OBJDIR)title.so $(title_OBJS) $(title_LDFLAGS)
 
-embed.o: embed.c
-	$(CC) $(embed_CFLAGS) -c embed.c
+$(OBJDIR)embed.o: embed.c
+	$(CC) $(embed_CFLAGS) -o $(OBJDIR)embed.o -c embed.c
 
-title.o: title.c
-	$(CC) $(title_CFLAGS) -c title.c
+$(OBJDIR)title.o: title.c
+	$(CC) $(title_CFLAGS) -o $(OBJDIR)title.o -c title.c
 
 clean:
 	$(RM) -- $(embed_OBJS) $(title_OBJS)
@@ -47,9 +48,9 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Presenter/slides
-	$(INSTALL) -m 0644 embed.so $(DESTDIR)$(LIBDIR)/Presenter/slides/embed.so
+	$(INSTALL) -m 0644 $(OBJDIR)embed.so $(DESTDIR)$(LIBDIR)/Presenter/slides/embed.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Presenter/slides
-	$(INSTALL) -m 0644 title.so $(DESTDIR)$(LIBDIR)/Presenter/slides/title.so
+	$(INSTALL) -m 0644 $(OBJDIR)title.so $(DESTDIR)$(LIBDIR)/Presenter/slides/title.so
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Presenter/slides/embed.so

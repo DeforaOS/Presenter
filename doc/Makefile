@@ -1,4 +1,5 @@
-TARGETS	= presenter.1 presenter.html
+TARGETS	= $(OBJDIR)presenter.1 $(OBJDIR)presenter.html
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 RM	= rm -f
@@ -9,11 +10,11 @@ INSTALL	= install
 
 all: $(TARGETS)
 
-presenter.1: presenter.xml
-	./docbook.sh -P "$(PREFIX)" -- "presenter.1"
+$(OBJDIR)presenter.1: presenter.xml
+	./docbook.sh -P "$(PREFIX)" -- "$(OBJDIR)presenter.1"
 
-presenter.html: manual.css.xml presenter.css.xml presenter.xml
-	./docbook.sh -P "$(PREFIX)" -- "presenter.html"
+$(OBJDIR)presenter.html: manual.css.xml presenter.css.xml presenter.xml
+	./docbook.sh -P "$(PREFIX)" -- "$(OBJDIR)presenter.html"
 
 clean:
 	$(RM) -- $(presenter.1_OBJS) $(presenter.html_OBJS)
@@ -24,8 +25,8 @@ distclean: clean
 	$(RM) -- $(TARGETS)
 
 install: $(TARGETS)
-	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "presenter.1"
-	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "presenter.html"
+	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "$(OBJDIR)presenter.1"
+	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -i -- "$(OBJDIR)presenter.html"
 
 uninstall:
 	./docbook.sh -P "$(DESTDIR)$(PREFIX)" -u -- "presenter.1"
