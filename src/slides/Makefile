@@ -48,9 +48,9 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Presenter/slides
-	$(INSTALL) -m 0644 $(OBJDIR)embed.so $(DESTDIR)$(LIBDIR)/Presenter/slides/embed.so
+	$(INSTALL) -m 0755 $(OBJDIR)embed.so $(DESTDIR)$(LIBDIR)/Presenter/slides/embed.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Presenter/slides
-	$(INSTALL) -m 0644 $(OBJDIR)title.so $(DESTDIR)$(LIBDIR)/Presenter/slides/title.so
+	$(INSTALL) -m 0755 $(OBJDIR)title.so $(DESTDIR)$(LIBDIR)/Presenter/slides/title.so
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Presenter/slides/embed.so
