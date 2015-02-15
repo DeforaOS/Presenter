@@ -721,6 +721,7 @@ static void _preferences_window(Presenter * presenter)
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_APPLY, GTK_RESPONSE_APPLY,
 			GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	gtk_window_set_resizable(GTK_WINDOW(presenter->pr_window), FALSE);
 	g_signal_connect_swapped(presenter->pr_window, "delete-event",
 			G_CALLBACK(_preferences_on_closex), presenter);
 	g_signal_connect(presenter->pr_window, "response", G_CALLBACK(
