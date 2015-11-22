@@ -353,7 +353,7 @@ Presenter * presenter_new(void)
 	gtk_window_set_icon_name(GTK_WINDOW(presenter->window),
 			"x-office-presentation");
 #endif
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	/* menubar */
 #ifndef EMBEDDED
 	widget = desktop_menubar_create(_presenter_menubar, presenter, group);
@@ -951,7 +951,7 @@ static void _present_window(Presenter * presenter)
 			&presenter->s_helper.background);
 	g_signal_connect_swapped(presenter->sl_window, "delete-event",
 			G_CALLBACK(_presenter_on_slideshow_closex), presenter);
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	/* toolbar */
 	presenter->sl_toolbar = gtk_toolbar_new();
 	toolitem = gtk_tool_button_new_from_stock(GTK_STOCK_GO_BACK);
