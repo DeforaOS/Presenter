@@ -599,7 +599,7 @@ int presenter_open(Presenter * presenter, char const * filename)
 	if(filename == NULL)
 		return presenter_open_dialog(presenter);
 	if((document = presenterdocument_new(filename)) == NULL)
-		return -presenter_error(presenter, error_get(), 1);
+		return -presenter_error(presenter, error_get(NULL), 1);
 	presenter_close(presenter);
 	presenter->document = document;
 	return 0;
@@ -1033,7 +1033,7 @@ int presenter_slide_load(Presenter * presenter, char const * type)
 	presenter->s_plugins = q;
 	q = &presenter->s_plugins[presenter->s_plugins_cnt];
 	if((q->plugin = plugin_new(LIBDIR, PACKAGE, "slides", type)) == NULL)
-		return -presenter_error(NULL, error_get(), 1);
+		return -presenter_error(NULL, error_get(NULL), 1);
 	if((q->type = string_new(type)) == NULL
 			|| (q->definition = plugin_lookup(q->plugin, "slide"))
 			== NULL
@@ -1045,7 +1045,7 @@ int presenter_slide_load(Presenter * presenter, char const * type)
 		/* FIXME the error may not have been set */
 		string_delete(q->type);
 		plugin_delete(q->plugin);
-		return -presenter_error(NULL, error_get(), 1);
+		return -presenter_error(NULL, error_get(NULL), 1);
 	}
 	presenter->s_plugins_cnt++;
 	return 0;
