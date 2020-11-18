@@ -7,214 +7,221 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Presenter 0.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-07 01:54+0100\n"
+"POT-Creation-Date: 2020-11-18 23:57+0100\n"
 "PO-Revision-Date: 2013-09-16 14:06+0200\n"
 "Last-Translator: Pierre Pronchery <khorben@defora.org>\n"
 "Language-Team: French\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../src/main.c:53
-msgid "Usage: presenter\n"
-msgstr "Usage: presenter\n"
+#: ../src/main.c:78
+#, c-format
+msgid "Usage: %s [filename]\n"
+msgstr "Usage: %s [fichier]\n"
 
-#: ../src/presenter.c:131
+#: ../src/presenter.c:175
 msgid "_New"
 msgstr "_Nouveau"
 
-#: ../src/presenter.c:133
+#: ../src/presenter.c:177
 msgid "_Open"
 msgstr "_Ouvrir"
 
-#: ../src/presenter.c:136
+#: ../src/presenter.c:180
 msgid "_Save"
 msgstr "_Enregistrer"
 
-#: ../src/presenter.c:138
+#: ../src/presenter.c:182
 msgid "_Save as..."
 msgstr "_Enregistrer sous..."
 
-#: ../src/presenter.c:142
+#: ../src/presenter.c:186
 msgid "_Properties"
 msgstr "_Propriétés"
 
-#: ../src/presenter.c:145
+#: ../src/presenter.c:189
 msgid "_Close"
 msgstr "_Fermer"
 
-#: ../src/presenter.c:153
+#: ../src/presenter.c:197
 msgid "_Undo"
 msgstr "_Annuler"
 
-#: ../src/presenter.c:155
+#: ../src/presenter.c:199
 msgid "_Redo"
 msgstr "_Rétablir"
 
-#: ../src/presenter.c:157
+#: ../src/presenter.c:201
 msgid "Cu_t"
 msgstr "Co_uper"
 
-#: ../src/presenter.c:159
+#: ../src/presenter.c:203
 msgid "_Copy"
 msgstr "_Copier"
 
-#: ../src/presenter.c:161
+#: ../src/presenter.c:205
 msgid "_Paste"
 msgstr "C_oller"
 
-#: ../src/presenter.c:164
+#: ../src/presenter.c:208
 msgid "Select _all"
 msgstr "Sélectionner _tout"
 
-#: ../src/presenter.c:171
+#: ../src/presenter.c:215
 msgid "_Unselect all"
 msgstr "Tout _désélectionner"
 
-#: ../src/presenter.c:174
+#: ../src/presenter.c:218
 msgid "_Find"
 msgstr "_Chercher"
 
-#: ../src/presenter.c:177
+#: ../src/presenter.c:221
 msgid "_Preferences"
 msgstr "_Préférences"
 
-#: ../src/presenter.c:184
+#: ../src/presenter.c:228
 msgid "_File..."
 msgstr "_Fichier..."
 
-#: ../src/presenter.c:191
+#: ../src/presenter.c:235
 msgid "_Slideshow"
 msgstr "_Présentation"
 
-#: ../src/presenter.c:198
+#: ../src/presenter.c:242
 msgid "_Contents"
 msgstr "_Sommaire"
 
-#: ../src/presenter.c:200
+#: ../src/presenter.c:244
 msgid "_About"
 msgstr "À _propos"
 
-#: ../src/presenter.c:211
+#: ../src/presenter.c:255
 msgid "_File"
 msgstr "_Fichier"
 
-#: ../src/presenter.c:212
+#: ../src/presenter.c:256
 msgid "_Edit"
 msgstr "É_dition"
 
-#: ../src/presenter.c:213
+#: ../src/presenter.c:257
 msgid "_Insert"
 msgstr "_Insertion"
 
-#: ../src/presenter.c:214
+#: ../src/presenter.c:258
 msgid "_View"
 msgstr "_Vue"
 
-#: ../src/presenter.c:215
+#: ../src/presenter.c:259
 msgid "_Help"
 msgstr "_Aide"
 
-#: ../src/presenter.c:222
+#: ../src/presenter.c:266
 msgid "New"
 msgstr "Nouveau"
 
-#: ../src/presenter.c:223
+#: ../src/presenter.c:267
 msgid "Open"
 msgstr "Ouvrir"
 
-#: ../src/presenter.c:226
+#: ../src/presenter.c:270
 msgid "Save"
 msgstr "Enregistrer"
 
-#: ../src/presenter.c:228
+#: ../src/presenter.c:272
 msgid "Save as"
 msgstr "Enregistrer sous"
 
-#: ../src/presenter.c:231
+#: ../src/presenter.c:275
 msgid "Cut"
 msgstr "Couper"
 
-#: ../src/presenter.c:232
+#: ../src/presenter.c:276
 msgid "Copy"
 msgstr "Copier"
 
-#: ../src/presenter.c:234
+#: ../src/presenter.c:278
 msgid "Paste"
 msgstr "Coller"
 
-#: ../src/presenter.c:238
+#: ../src/presenter.c:282
 msgid "Find"
 msgstr "Chercher"
 
-#: ../src/presenter.c:240
+#: ../src/presenter.c:284
 msgid "Select all"
 msgstr "Tout sélectionner"
 
-#: ../src/presenter.c:243
+#: ../src/presenter.c:287
 msgid "Preferences"
 msgstr "Préférences"
 
-#: ../src/presenter.c:245
+#: ../src/presenter.c:289
 msgid "Properties"
 msgstr "Propriétés"
 
-#: ../src/presenter.c:248
+#: ../src/presenter.c:292
 msgid "Insert file"
 msgstr "Insérer un fichier..."
 
-#: ../src/presenter.c:252
+#: ../src/presenter.c:296
 msgid "Slideshow"
 msgstr "Présentation"
 
-#: ../src/presenter.c:256
+#: ../src/presenter.c:300
 msgid "Help"
 msgstr "Aide"
 
-#: ../src/presenter.c:351
+#: ../src/presenter.c:412
 msgid "Presenter - "
 msgstr "Presenter - "
 
-#: ../src/presenter.c:352
+#: ../src/presenter.c:413
 msgid "(Untitled)"
 msgstr "(Sans titre)"
 
-#: ../src/presenter.c:405
+#: ../src/presenter.c:480
 msgid "Presentation tool for the DeforaOS desktop"
 msgstr "Outil de présentation pour l'environnement DeforaOS"
 
-#: ../src/presenter.c:412
+#: ../src/presenter.c:487
 msgid "translator-credits"
 msgstr "Pierre Pronchery <khorben@defora.org>"
 
-#: ../src/presenter.c:436
+#: ../src/presenter.c:511
 msgid ""
 "There are unsaved changes.\n"
 "Discard or save them?"
-msgstr "Il y a des changements non enregistrés.\n"
+msgstr ""
+"Il y a des changements non enregistrés.\n"
 "Abandonner ou enregistrer ?"
 
-#: ../src/presenter.c:463 ../src/presenter.c:472
+#: ../src/presenter.c:542 ../src/presenter.c:551
 msgid "Question"
 msgstr "Question"
 
-#: ../src/presenter.c:492 ../src/presenter.c:496
+#: ../src/presenter.c:575 ../src/presenter.c:579
 msgid "Error"
 msgstr "Erreur"
 
-#: ../src/presenter.c:523
+#: ../src/presenter.c:617
 msgid "Open file..."
 msgstr "Ouvrir un fichier..."
 
-#: ../src/presenter.c:529
+#: ../src/presenter.c:623
 msgid "Presenter files"
 msgstr "Fichiers Presenter"
 
-#: ../src/presenter.c:533
+#: ../src/presenter.c:627
 msgid "All files"
 msgstr "Tous les fichiers"
 
-#: ../src/presenter.c:575
+#: ../src/presenter.c:670
 msgid "Save as..."
 msgstr "Enregistrer sous..."
+
+#: ../src/presenter.c:825
+msgid "(Untitled"
+msgstr "(Sans titre"
