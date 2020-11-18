@@ -30,6 +30,7 @@ TARGETS="all"
 #executables
 GCC="gcc"
 MAKE="make"
+MKDIR="mkdir -p"
 MKTEMP="mktemp"
 RM="rm -f"
 
@@ -52,4 +53,43 @@ _embedded()
 
 
 #main
-embedded							|| exit 2
+clean=0
+while getopts "cO:P:" name; do
+	case "$name" in
+		c)
+			clean=1
+			;;
+		O)
+			export "${OPTARG%%=*}"="${OPTARG#*=}"
+			;;
+		P)
+			#XXX ignored for compatibility
+			;;
+		?)
+			_usage
+			exit $?
+			;;
+	esac
+done
+shift $((OPTIND - 1))
+if [ $# -lt 1 ]; then
+	_usage
+	exit $?
+fi
+
+#clean
+[ $clean -ne 0 ] && exit 0
+
+exec 3>&1
+ret=0
+while [ $# -gt 0 ]; do
+	target="$1"
+	dirname="${target%/*}"
+	shift
+
+	if [ -n "$dirname" -a "$dirname" != "$target" ]; then
+		$MKDIR -- "$dirname"				|| ret=$?
+	fi
+	_embedded > "$target"					|| ret=$?
+done
+exit $ret
